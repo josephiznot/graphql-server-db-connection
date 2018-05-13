@@ -38,8 +38,8 @@ const schema = buildSchema(
         phoneNumber: String!
     },
     type Query {
-        users: [User]!
-        user(id: Int!): User!
+        getUsers: [User]!
+        getUser(id: Int!): User!
         verifyUser(email: String, userName: String, password: String!): User!
     },
     type Mutation{
@@ -54,7 +54,7 @@ const schema = buildSchema(
     `
 );
 const root = {
-  users(_, req) {
+  getUsers(_, req) {
     return req.app
       .get("db")
       .get_users()
@@ -64,7 +64,7 @@ const root = {
         });
       });
   },
-  user({ id }, req) {
+  getUser({ id }, req) {
     return req.app
       .get("db")
       .get_users()
@@ -80,7 +80,6 @@ const root = {
       .get("db")
       .delete_user(id)
       .then(response => {
-        console.log(response);
         return new User(response[0]);
       });
   },
@@ -120,12 +119,10 @@ const root = {
       })
       .then(credentials => {
         bcrypt.compare(password, credentials.user_password, (err, hashRes) => {
-          if (hashRes) {
-            return new User(credentials);
-          } else {
-            throw new Error("password incorrect");
-          }
+          if (!hashRes) throw new Error("password incorrect");
         });
+        BL;
+        return new User(credentials);
       });
   }
 };
