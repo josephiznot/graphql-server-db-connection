@@ -118,11 +118,11 @@ const root = {
         }
       })
       .then(credentials => {
-        bcrypt.compare(password, credentials.user_password, (err, hashRes) => {
-          if (!hashRes) throw new Error("password incorrect");
-        });
-        BL;
-        return new User(credentials);
+        if (bcrypt.compareSync(password, credentials.user_password)) {
+          return new User(credentials);
+        } else {
+          throw new Error("password incorrect");
+        }
       });
   }
 };
