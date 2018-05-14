@@ -4,28 +4,13 @@ const app = express();
 const massive = require("massive");
 const { buildSchema } = require("graphql");
 const bcrypt = require("bcrypt");
-
-class User {
-  constructor({
-    user_id,
-    user_name,
-    user_email,
-    first_name,
-    last_name,
-    phone_number
-  }) {
-    this.id = user_id;
-    this.name = user_name;
-    this.email = user_email;
-    this.firstName = first_name;
-    this.lastName = last_name;
-    this.phoneNumber = phone_number;
-    // this.user_password = user_password;
-  }
-  getData(data) {
-    return data.map(getData);
-  }
-}
+const {
+  addUser,
+  deleteUser,
+  getUser,
+  getUsers,
+  verifyUser
+} = require("./schemaCtrl");
 
 const schema = buildSchema(
   `
@@ -54,75 +39,11 @@ const schema = buildSchema(
     `
 );
 const root = {
-  getUsers(_, req) {
-    return req.app
-      .get("db")
-      .get_users()
-      .then(response => {
-        return response.map(val => {
-          return new User(val);
-        });
-      });
-  },
-  getUser({ id }, req) {
-    return req.app
-      .get("db")
-      .get_users()
-      .then(response => {
-        const filtered = response.filter(user => {
-          return user.user_id === id;
-        });
-        return new User(filtered[0]);
-      });
-  },
-  deleteUser({ id }, req) {
-    return req.app
-      .get("db")
-      .delete_user(id)
-      .then(response => {
-        return new User(response[0]);
-      });
-  },
-  addUser(
-    { userName, email, firstName, lastName, phoneNumber, password },
-    req
-  ) {
-    return req.app
-      .get("db")
-      .add_user([
-        userName,
-        email,
-        firstName,
-        lastName,
-        phoneNumber,
-        bcrypt.hashSync(password, 10)
-      ])
-      .then(response => {
-        return new User(response[0]);
-      });
-  },
-  verifyUser({ email, password, userName }, req) {
-    return req.app
-      .get("db")
-      .get_users()
-      .then(response => {
-        const filtered = response.filter(e => {
-          return e.user_email === email || e.user_name === userName;
-        });
-        if (!filtered[0]) {
-          throw new Error("incorrect email or username");
-        } else {
-          return filtered[0];
-        }
-      })
-      .then(credentials => {
-        if (bcrypt.compareSync(password, credentials.user_password)) {
-          return new User(credentials);
-        } else {
-          throw new Error("password incorrect");
-        }
-      });
-  }
+  getUser,
+  getUsers,
+  addUser,
+  deleteUser,
+  verifyUser
 };
 module.exports = {
   root,
