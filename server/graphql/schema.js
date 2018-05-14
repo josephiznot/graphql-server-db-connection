@@ -89,17 +89,15 @@ const root = {
   ) {
     return req.app
       .get("db")
-      .add_user([userName, email, firstName, lastName, phoneNumber])
+      .add_user([
+        userName,
+        email,
+        firstName,
+        lastName,
+        phoneNumber,
+        bcrypt.hashSync(password, 10)
+      ])
       .then(response => {
-        /*
-          DUE TO BLOCK SCOPE, I CANNOT ADD THE HASH PASSWORD
-          TO THE USER AND SEND BACK THE USER TO THE CLIENT.
-          I MUST ADD THE CREDENTIALS AND THEN UPDATE THE USER
-          WITH A HASHED PASSWORD.
-        */
-        bcrypt.hash(password, 10, (err, hash) => {
-          req.app.get("db").update_password([hash, response[0].user_id]);
-        });
         return new User(response[0]);
       });
   },
