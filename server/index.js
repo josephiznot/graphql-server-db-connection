@@ -17,6 +17,17 @@ massive(process.env.DATABASE_KEY).then(db => {
   app.set("db", db);
 });
 
+app.get("/api/get_item", (req, res) => {
+  let { department, item } = req.query;
+  console.log(department, item);
+  req.app
+    .get("db")
+    .get_stuff([department, item])
+    .then(response => {
+      res.status(200).send(response);
+    });
+});
+
 app.use("/graphql", graphqlHTTP({ schema, rootValue: root, graphiql: true }));
 app.post("/graphql", graphqlHTTP({ schema, rootValue: root, graphiql: false }));
 
