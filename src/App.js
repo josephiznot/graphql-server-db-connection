@@ -24,11 +24,17 @@ class App extends Component {
             <Link to="/">
               <button>Home</button>
             </Link>
-            <Link to="/orders">
-              <button>Orders</button>
+            <Link to="/orders/paper">
+              <button>Paper</button>
+            </Link>
+            <Link to="/orders/ink">
+              <button>ink</button>
             </Link>
             {routes}
           </div>
+          <Link to="/checkout">
+            <button>Checkout</button>
+          </Link>
         </ApolloProvider>
       </HashRouter>
     );

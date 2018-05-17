@@ -7,6 +7,12 @@ const massive = require("massive");
 const graphqlHTTP = require("express-graphql");
 
 const { schema, root } = require(`${__dirname}/graphql/schema`);
+const {
+  addToCart,
+  negotiate,
+  getCart,
+  filterCart
+} = require("./controllers/cartCtrl");
 
 const port = 4001;
 
@@ -17,16 +23,12 @@ massive(process.env.DATABASE_KEY).then(db => {
   app.set("db", db);
 });
 
-app.get("/api/get_item", (req, res) => {
-  let { department, item } = req.query;
-  console.log(department, item);
-  req.app
-    .get("db")
-    .get_stuff([department, item])
-    .then(response => {
-      res.status(200).send(response);
-    });
-});
+//--------------------------competetetenciesssss-------------
+app.post("/api/add_to_cart", addToCart);
+app.put("/api/negotiate", negotiate);
+app.get("/api/get_cart", getCart);
+app.get("/api/filter_cart", filterCart);
+//-----------------------------------------------------
 
 app.use("/graphql", graphqlHTTP({ schema, rootValue: root, graphiql: true }));
 app.post("/graphql", graphqlHTTP({ schema, rootValue: root, graphiql: false }));
